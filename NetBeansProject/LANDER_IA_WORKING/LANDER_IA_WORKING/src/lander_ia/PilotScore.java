@@ -29,20 +29,19 @@ import org.encog.neural.networks.BasicNetwork;
 
 public class PilotScore implements CalculateScore {
 
-	@Override
-	public double calculateScore(MLMethod network) {
-		NeuralPilot pilot = new NeuralPilot((BasicNetwork)network, false);
-		return pilot.scorePilot();
-	}
+    @Override
+    public double calculateScore(MLMethod network) {
+        NeuralPilot pilot = new NeuralPilot((BasicNetwork)network, false);
+        return pilot.scorePilot();
+    }
 
+    @Override
+    public boolean shouldMinimize() {
+        return false;
+    }
 
-	public boolean shouldMinimize() {
-		return false;
-	}
-
-
-	@Override
-	public boolean requireSingleThreaded() {
-		return false;
-	}
+    @Override
+    public boolean requireSingleThreaded() {
+        return false;
+    }
 }
