@@ -54,7 +54,7 @@ public class GraficoPuntuacion {
         lastPoint = new Point( tlCorner.x+10, brCorner.y-10);
         for(int gen = 1; gen <= lastGen; gen++){
             Float puntuation = listaPuntuaciones.get(gen);
-                if(puntuation != null){
+            if(puntuation != null){
                 float yRatio =  puntuation/(float)maxScore;
                 float xRatio =  gen/(float)lastGen; 
 
