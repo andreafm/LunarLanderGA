@@ -6,8 +6,6 @@ package lander_ia;
 
 import java.awt.Point;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import org.encog.neural.networks.BasicNetwork;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -17,7 +15,6 @@ import org.newdawn.slick.Graphics;
  * @author Lope
  */
 public class GraficoPuntuacion {
-   
     HashMap<Integer, Float> listaPuntuaciones;
     private final Point tlCorner;
     private final Point brCorner;
@@ -29,24 +26,19 @@ public class GraficoPuntuacion {
     Point point;
     
     public GraficoPuntuacion(BasicNetwork _red, Point _tlCorner, Point _brCorner){
-        
         tlCorner = _tlCorner;
         brCorner = _brCorner;
         alto = brCorner.y - tlCorner.y -20;
         ancho = brCorner.x - tlCorner.x-20;
-        listaPuntuaciones = new HashMap<Integer,Float>();
-       
-        
+        listaPuntuaciones = new HashMap<>();  
     }
     
      public void AddScore(int gen, float score){
         listaPuntuaciones.put(gen, score);
         lastGen = (int) gen;
-        
     }
     
     public void draw(Graphics grphcs){
-    
         grphcs.setColor(Color.white);
         grphcs.setAntiAlias(false);
         grphcs.fillRect(tlCorner.x,tlCorner.y, brCorner.x - tlCorner.x, brCorner.y - tlCorner.y);
@@ -61,26 +53,20 @@ public class GraficoPuntuacion {
         
         lastPoint = new Point( tlCorner.x+10, brCorner.y-10);
         for(int gen = 1; gen <= lastGen; gen++){
-            
-            Float puntuacion = listaPuntuaciones.get(gen);
-            if(puntuacion != null){
-        
-             float yRatio =  puntuacion.floatValue()/(float)maxScore;
-             float xRatio =  gen/(float)lastGen; 
-             
-             point = new Point( (int)(tlCorner.x+ xRatio*ancho+10),(int)(brCorner.y-yRatio*alto-10));
-             
-             grphcs.setColor(Color.red);
-             grphcs.drawLine(lastPoint.x+2,lastPoint.y+2, point.x+2, point.y+2);
-             grphcs.setColor(Color.blue);
-             grphcs.fillOval(point.x,point.y, 5, 5);
-             grphcs.fillOval(lastPoint.x,lastPoint.y, 5, 5);
-             lastPoint = point;
-        
-              
-             
+            Float puntuation = listaPuntuaciones.get(gen);
+            if(puntuation != null){
+                float yRatio =  puntuation/(float)maxScore;
+                float xRatio =  gen/(float)lastGen; 
+
+                point = new Point( (int)(tlCorner.x+ xRatio*ancho+10),(int)(brCorner.y-yRatio*alto-10));
+
+                grphcs.setColor(Color.red);
+                grphcs.drawLine(lastPoint.x+2,lastPoint.y+2, point.x+2, point.y+2);
+                grphcs.setColor(Color.blue);
+                grphcs.fillOval(point.x,point.y, 5, 5);
+                grphcs.fillOval(lastPoint.x,lastPoint.y, 5, 5);
+                lastPoint = point;
             }
         }
-    }
-       
+    }    
 }

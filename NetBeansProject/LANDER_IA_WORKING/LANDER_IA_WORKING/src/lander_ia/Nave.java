@@ -10,7 +10,6 @@ import org.encog.neural.networks.BasicNetwork;
 import org.encog.util.arrayutil.NormalizationAction;
 import org.encog.util.arrayutil.NormalizedField;
 import org.newdawn.slick.Animation;
-import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 
 /**
@@ -18,8 +17,6 @@ import org.newdawn.slick.SpriteSheet;
  * @author Lope
  */
 public class Nave {
-    
-    
     LanderSimulator sim;
     BasicNetwork red;
     Animation animacion;
@@ -34,7 +31,6 @@ public class Nave {
     private NormalizedField velocityStats;
     
     public Nave(BasicNetwork _red){
-    
         fuelStats = new NormalizedField(NormalizationAction.Normalize, "fuel", 200, 0, -0.9, 0.9);
         altitudeStats = new NormalizedField(NormalizationAction.Normalize, "altitude", 10000, 0, -0.9, 0.9);
         velocityStats = new NormalizedField(NormalizationAction.Normalize, "velocity", LanderSimulator.TERMINAL_VELOCITY, -LanderSimulator.TERMINAL_VELOCITY, -0.9, 0.9);
@@ -49,19 +45,16 @@ public class Nave {
             spriteNave =  new SpriteSheet("data/nave.bmp",52,39);
             spriteFuego =  new SpriteSheet("data/fuego.bmp",21,19);
             spriteExplosion = new SpriteSheet("data/explosion.bmp",75,179);
-        }catch(Exception e){};
+        }catch(Exception e){}
         animacion = new Animation(spriteNave,100);
         animacionFuego = new Animation(spriteFuego,200);
         explosion = new Animation(spriteExplosion,50); 
         explosion.stopAt(23);
        
         x = 130;
-    
     }
     
     public void update(){
-    
-      
             MLData input = new BasicMLData(3);
             input.setData(0, this.fuelStats.normalize(sim.getFuel()));
             input.setData(1, this.altitudeStats.normalize(sim.getAltitude()));
@@ -71,20 +64,12 @@ public class Nave {
             
             y = (int) (480 - 500*(sim.getAltitude()/10000));
 
-            if( value > 0 )
-		thrust = true;
-            else
-		thrust = false;
+            thrust = value > 0;
 		
             if(sim.flying())
                 sim.turn(thrust);
-           
-            
-       
-    
-    };
+    }
     public void draw(){
-    
         animacion.draw(x,y);
         if(thrust && sim.flying() && (sim.getFuel() > 0)) animacionFuego.draw(x+20,y+32);
         
@@ -95,14 +80,11 @@ public class Nave {
             animacion.stop();
         
             if(explosion.isStopped() || sim.getVelocity()>= -2)
-                explosionFlag = false;
-            
+                explosionFlag = false;  
         }
-        
-    };
+    }
     
     public boolean isFlying(){
-      return sim.flying();
-    }
-        
+        return sim.flying();
+    }   
 }

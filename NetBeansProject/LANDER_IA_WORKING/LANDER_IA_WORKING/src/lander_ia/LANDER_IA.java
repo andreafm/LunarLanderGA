@@ -27,10 +27,6 @@ import org.newdawn.slick.SpriteSheet;
  * @author Lope
  */
 public class LANDER_IA extends BasicGame{
-
-    /**
-     * @param args the command line arguments
-     */
     SpriteSheet fondo;
     SpriteSheet fondo2;
     Nave nave;
@@ -40,48 +36,34 @@ public class LANDER_IA extends BasicGame{
     int epoch = 1;
     int flagSpeed = 0;
     boolean flagNoRender = false;
-    ArrayList<Float> listaPuntuaciones = new ArrayList<Float>();
+    ArrayList<Float> listaPuntuaciones = new ArrayList<>();
     
     @Override
     public void keyPressed(int key, char c){
-       
- 
-        
         if(c == '1') 
             flagSpeed = 1;
-        
-
         if(c == '2')
-                flagSpeed = 2;
-         
+            flagSpeed = 2;
         if(c == '3')
-                flagNoRender = !flagNoRender;
-
-       
-        
-        
+            flagNoRender = !flagNoRender;
     }
     
-    //_____
     public static BasicNetwork createNetwork(){
-		FeedForwardPattern pattern = new FeedForwardPattern();
-		pattern.setInputNeurons(3);
-		pattern.addHiddenLayer(5);
-		pattern.setOutputNeurons(1);
-		pattern.setActivationFunction(new ActivationTANH());
-		BasicNetwork network = (BasicNetwork)pattern.generate();
-		network.reset();
-		return network;
-	}
-    
+        FeedForwardPattern pattern = new FeedForwardPattern();
+        pattern.setInputNeurons(3);
+        pattern.addHiddenLayer(5);
+        pattern.setOutputNeurons(1);
+        pattern.setActivationFunction(new ActivationTANH());
+        BasicNetwork network = (BasicNetwork)pattern.generate();
+        network.reset();
+        return network;
+    }
     
     public LANDER_IA(){
-        super("MarioIA");
+        super("Lunar Lander IA");
     }
     
-    
     public void rondaEntrenamiento(){
-    
                 double error = train.getError();
                 int generaciones  = 0;
                 
@@ -91,61 +73,45 @@ public class LANDER_IA extends BasicGame{
                     epoch++;
                     generaciones++;
                 }
-		
-    
-    
-    };
+    }
     
     public static void main(String[] args) {
         try{
-            
             AppGameContainer app = new AppGameContainer(new LANDER_IA());
             app.setDisplayMode(600, 530, false);
             app.setMaximumLogicUpdateInterval(60);			
             app.setTargetFrameRate(60);
             app.setAlwaysRender(true);
             app.setVSync(true);
-            
             app.start();
-
         }
-        catch (SlickException e){     }
+        catch (SlickException e){}
     }
 
     @Override
     public void init(GameContainer gc) throws SlickException {
         fondo =  new SpriteSheet("data/FondoLander.png",304,667);
         fondo2 =  new SpriteSheet("data/fondo2.png",304,667);
-        
-        BasicNetwork network = createNetwork();
-		
-		
-		
-		train = new MLMethodGeneticAlgorithm(new MethodFactory(){
-		@Override
-		public MLMethod factor() {
-			final BasicNetwork result = createNetwork();
-			((MLResettable)result).reset();
-			return result;
-		}},new PilotScore(),500);
-                
-		
-		
-		
 
-		//train.finishTraining();
+        train = new MLMethodGeneticAlgorithm(new MethodFactory(){
+        @Override
+        public MLMethod factor() {
+                final BasicNetwork result = createNetwork();
+                ((MLResettable)result).reset();
+                return result;
+            }
+        },new PilotScore(),500);
 
-		System.out.println("\nHow the winning network landed:");
-		network = (BasicNetwork)train.getMethod();
-		NeuralPilot pilot = new NeuralPilot(network,true);
-		System.out.println(pilot.scorePilot());
-                
-                nave = new Nave(network);
-                grafico = new GraficoRNA(network, new Point(305,0), new Point(600,296));
-                grafico2 = new GraficoPuntuacion(network, new Point(305,368), new Point(600,529));
-        
-       
-    
+        //train.finishTraining();
+
+        System.out.println("\nHow the winning network landed:");
+        BasicNetwork network = (BasicNetwork)train.getMethod();
+        NeuralPilot pilot = new NeuralPilot(network,true);
+        System.out.println(pilot.scorePilot());
+
+        nave = new Nave(network);
+        grafico = new GraficoRNA(network, new Point(305,0), new Point(600,296));
+        grafico2 = new GraficoPuntuacion(network, new Point(305,368), new Point(600,529));
     }
 
     @Override
@@ -157,8 +123,7 @@ public class LANDER_IA extends BasicGame{
             listaPuntuaciones.add((float) train.getError());
             try {
                 Thread.sleep(200);
-            } catch (InterruptedException ex) {
-            }
+            } catch (InterruptedException ex) {}
             
             grafico2.AddScore(epoch, (float)train.getError());
             nave = new Nave((BasicNetwork) train.getMethod());
@@ -166,38 +131,31 @@ public class LANDER_IA extends BasicGame{
         }
         
         if(flagSpeed != 0){
-                if(flagSpeed == 1){
-                   gc.setMaximumLogicUpdateInterval(30);			
-                    gc.setTargetFrameRate(60);
-                    gc.setAlwaysRender(true);
-                    gc.setVSync(true);
-                    flagSpeed = 0;
-                    
-                }else{
-                  
-                    gc.setMaximumLogicUpdateInterval(0);			
-                    gc.setTargetFrameRate(2000);
-                    gc.setAlwaysRender(false);
-                    gc.setVSync(false);
-                    flagSpeed = 0;
-                
-                }
+            if(flagSpeed == 1){
+                gc.setMaximumLogicUpdateInterval(30);			
+                gc.setTargetFrameRate(60);
+                gc.setAlwaysRender(true);
+                gc.setVSync(true);
+                flagSpeed = 0;
+            }else{
+                gc.setMaximumLogicUpdateInterval(0);			
+                gc.setTargetFrameRate(2000);
+                gc.setAlwaysRender(false);
+                gc.setVSync(false);
+                flagSpeed = 0;
+            }
         }
     }
 
     @Override
     public void render(GameContainer gc, Graphics grphcs) throws SlickException {
-        
         if(!flagNoRender){
             fondo.draw(0,-120);
             nave.draw();
-
             fondo2.draw(0,-120);
             grafico.draw(grphcs);
             grafico2.draw(grphcs);
         }
-        
-       
         
         grphcs.setAntiAlias(false);
         grphcs.setColor(Color.white);
@@ -209,7 +167,6 @@ public class LANDER_IA extends BasicGame{
                 
         grphcs.setColor(Color.red);
         if(nave.thrust)
-             grphcs.drawString("THRUST!",426, 200);
-       
+            grphcs.drawString("THRUST!",426, 200);
     }
 }

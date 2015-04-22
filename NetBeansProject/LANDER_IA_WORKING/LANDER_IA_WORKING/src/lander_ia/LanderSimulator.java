@@ -26,88 +26,80 @@ package lander_ia;
 import java.text.NumberFormat;
 
 public class LanderSimulator {
+    public static final double GRAVITY = 1.62;
+    public static final double THRUST = 10;
+    public static final double TERMINAL_VELOCITY = 40;
 
-	public static final double GRAVITY = 1.62;
-	public static final double THRUST = 10;
-	public static final double TERMINAL_VELOCITY = 40;
+    private int fuel;
+    private int seconds;
+    private double altitude;
+    private double velocity;
 
-	private int fuel;
-	private int seconds;
-	private double altitude;
-	private double velocity;
+    public LanderSimulator() {
+        this.fuel = 50;
+        this.seconds = 0;
+        this.altitude = 10000;
+        this.velocity = 0;
+    }
 
-	public LanderSimulator() {
-		this.fuel = 50;
-		this.seconds = 0;
-		this.altitude = 10000;
-		this.velocity = 0;
-	}
+    public void turn(boolean thrust) {
+        this.seconds++;
+        this.velocity -= GRAVITY;
+        this.altitude += this.velocity;
 
-	public void turn(boolean thrust) {
-		this.seconds++;
-		this.velocity -= GRAVITY;
-		this.altitude += this.velocity;
+        if (thrust && this.fuel > 0) {
+            this.fuel--;
+            this.velocity += THRUST;
+        }
 
-		if (thrust && this.fuel > 0) {
-			this.fuel--;
-			this.velocity += THRUST;
-		}
+        this.velocity = Math.max(-TERMINAL_VELOCITY, this.velocity);
+        this.velocity = Math.min(TERMINAL_VELOCITY, this.velocity);
 
-		this.velocity = Math.max(-TERMINAL_VELOCITY, this.velocity);
-		this.velocity = Math.min(TERMINAL_VELOCITY, this.velocity);
+        if (this.altitude < 0)
+            this.altitude = 0;
+    }
 
-		if (this.altitude < 0)
-			this.altitude = 0;
-	}
+    public String telemetry() {
+            NumberFormat nf = NumberFormat.getNumberInstance();
+            nf.setMinimumFractionDigits(4);
+            nf.setMaximumFractionDigits(4);
+            StringBuilder result = new StringBuilder();
+            result.append("");
+            return result.toString();
+    }
 
-	public String telemetry() {
-		NumberFormat nf = NumberFormat.getNumberInstance();
-		nf.setMinimumFractionDigits(4);
-		nf.setMaximumFractionDigits(4);
-		StringBuilder result = new StringBuilder();
-		result.append("");
-		return result.toString();
-	}
+    public int score() {
+           int puntuacion = (20*this.seconds);
+           if(this.velocity < 0) puntuacion += 300*(40+this.velocity);
+           else puntuacion += 300*40;
+           return puntuacion; //FUNCIONA BIEN CON 5 NEURONAS
 
-        
-        
-	public int score() {
-		
-               
-                          
-               int puntuacion = (20*this.seconds);
-               if(this.velocity < 0) puntuacion += 300*(40+this.velocity);
-               else puntuacion += 300*40;
-                   
-               
-               return puntuacion; //FUNCIONA BIEN CON 5 NEURONAS
-               
-               /*
-               int puntuacion = (200*this.fuel);
-               if(this.velocity < 0) puntuacion += 500*(40+this.velocity);
-               else puntuacion += 500*40;
-                   
-               return puntuacion;
-               */
-	}
+           /*
+           int puntuacion = (200*this.fuel);
+           if(this.velocity < 0) puntuacion += 500*(40+this.velocity);
+           else puntuacion += 500*40;
 
-	public int getFuel() {
-		return fuel;
-	}
+           return puntuacion;
+           */
+    }
 
-	public int getSeconds() {
-		return seconds;
-	}
+    public int getFuel() {
+        return fuel;
+    }
 
-	public double getAltitude() {
-		return altitude;
-	}
+    public int getSeconds() {
+        return seconds;
+    }
 
-	public double getVelocity() {
-		return velocity;
-	}
+    public double getAltitude() {
+        return altitude;
+    }
 
-	public boolean flying() {
-		return (this.altitude > 0);
-	}
+    public double getVelocity() {
+        return velocity;
+    }
+
+    public boolean flying() {
+        return (this.altitude > 0);
+    }
 }
